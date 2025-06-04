@@ -2,11 +2,13 @@ package com.desafiosantander.application.service;
 
 import com.desafiosantander.application.dto.PedidoRequest;
 import com.desafiosantander.application.dto.PedidoResponse;
+import com.desafiosantander.application.event.PedidoCriadoEvent;
 import com.desafiosantander.application.mapper.PedidoMapper;
 import com.desafiosantander.domain.model.Cliente;
 import com.desafiosantander.domain.model.Pedido;
 import com.desafiosantander.domain.repository.ClienteRepository;
 import com.desafiosantander.domain.repository.PedidoRepository;
+import com.desafiosantander.infrastructure.kafka.PedidoEventProducer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -24,12 +26,25 @@ public class PedidoService {
     @Inject
     ClienteRepository clienteRepository;
 
+    @Inject
+    PedidoEventProducer pedidoEventProducer;
+
+    @Transactional
     public PedidoResponse criar(PedidoRequest request) {
         Cliente cliente = clienteRepository.findById(request.clienteId)
                 .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
 
         Pedido pedido = PedidoMapper.toEntity(request, cliente);
         pedidoRepository.persist(pedido);
+
+        // Publicar evento após persistir o pedido
+        PedidoCriadoEvent event = new PedidoCriadoEvent(
+                pedido.id,
+                cliente.id,
+                pedido.getStatus().name()
+        );
+        pedidoEventProducer.enviar(event);
+
         return PedidoMapper.toResponse(pedido);
     }
 
