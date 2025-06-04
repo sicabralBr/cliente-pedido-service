@@ -37,5 +37,11 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-kafka-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.desafiosantander</groupId>
+            <artifactId>cliente-pedido</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>
