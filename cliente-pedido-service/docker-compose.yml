@@ -48,8 +48,8 @@ services:
 
   cliente-pedido-service:
     build:
-      context: .
-      dockerfile: Dockerfile.jvm
+      context: ./cliente-pedido
+      dockerfile: ../Dockerfile.jvm
     container_name: cliente-pedido-service
     ports:
       - "8080:8080"
@@ -62,6 +62,20 @@ services:
       QUARKUS_DATASOURCE_PASSWORD: quarkus
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
 
+  logistica-service:
+    build:
+      context: ./logistica
+      dockerfile: ../Dockerfile.jvm
+    container_name: logistica-service
+    ports:
+      - "8082:8080"
+    depends_on:
+      - kafka
+      - cliente-pedido-service
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      PEDIDO_SERVICE_URL: http://cliente-pedido-service:8080
+
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
@@ -73,20 +87,6 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
-
-# logistica-service:
-#   build:
-#     context: ./logistica-service
-#     dockerfile: src/main/docker/Dockerfile.jvm
-#   container_name: logistica-service
-#   ports:
-#     - "8082:8080"
-#   depends_on:
-#     - kafka
-#     - cliente-pedido-service
-#   environment:
-#     KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-#     PEDIDO_SERVICE_URL: http://cliente-pedido-service:8080
 
 volumes:
   pgdata:

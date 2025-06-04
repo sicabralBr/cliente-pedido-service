@@ -1,0 +1,16 @@
+package com.desafiosantander.infrastructure;
+
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.core.MediaType;
+
+@Path("/api/pedidos")
+public interface PedidoClient {
+
+    @PUT
+    @Path("/{id}/status")
+    @Consumes(MediaType.TEXT_PLAIN)
+    void atualizarStatus(@PathParam("id") Long pedidoId, String novoStatus);
+}
