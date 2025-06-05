@@ -1,86 +1,198 @@
 # cliente-pedido-service
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Este projeto implementa microsserviços em Java com **Quarkus**, para gerenciar clientes e pedidos. Inclui integração com Kafka, persistência com Hibernate + Panache, consumo de APIs externas e orquestração com Airflow.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Autor
 
-## Running the application in dev mode
+- 👤 Gabriel Meello
+- 💼 [LinkedIn](https://www.linkedin.com/in/meellogabriel/)
+- 💻 [GitHub](https://github.com/gbmeello)
 
-You can run your application in dev mode that enables live coding using:
+---
 
-```shell script
+## 📦 Funcionalidades
+
+- Cadastro e gerenciamento de **Clientes** e **Pedidos**
+- Integração assíncrona via **Apache Kafka**
+- Consumo de API externa com **RestClient**
+- Orquestração com **Apache Airflow**
+- Armazenamento em **H2 Database**
+- Serialização com **Jackson**
+- Deploy nativo com **GraalVM**
+
+---
+
+## 🚀 Executando em modo Dev
+
+Com hot reload:
+
+```bash
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+Acesse o Dev UI: [http://localhost:8080/q/dev/](http://localhost:8080/q/dev/)
 
-## Packaging and running the application
+---
 
-The application can be packaged using:
+## 📦 Empacotando e executando
 
-```shell script
+### JAR tradicional:
+
+```bash
 ./mvnw package
+java -jar target/quarkus-app/quarkus-run.jar
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+### Über-JAR:
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
+```bash
 ./mvnw package -Dquarkus.package.jar.type=uber-jar
+java -jar target/*-runner.jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+---
 
-## Creating a native executable
+## 🧊 Executável Nativo
 
-You can create a native executable using:
+### Requisitos: GraalVM ou container
 
-```shell script
+```bash
 ./mvnw package -Dnative
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+ou via container:
 
-```shell script
+```bash
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
 
-You can then execute your native executable with: `./target/cliente-pedido-service-1.0.0-SNAPSHOT-runner`
+Executar:
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+```bash
+./target/cliente-pedido-service-1.0.0-SNAPSHOT-runner
+```
 
-## Related Guides
+---
 
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- JDBC Driver - H2 ([guide](https://quarkus.io/guides/datasource)): Connect to the H2 database via JDBC
-- REST Client ([guide](https://quarkus.io/guides/rest-client)): Call REST services
-- Apache Kafka Client ([guide](https://quarkus.io/guides/kafka)): Connect to Apache Kafka with its native API
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
+## 🔗 Integrações e Extensões Usadas
 
-## Provided Code
+| Recurso | Descrição |
+|--------|----------|
+| [REST Client](https://quarkus.io/guides/rest-client) | Consumo de APIs externas |
+| [REST](https://quarkus.io/guides/rest) | Exposição de endpoints HTTP |
+| [Hibernate ORM + Panache](https://quarkus.io/guides/hibernate-orm-panache) | Persistência com modelo simplificado |
+| [Kafka](https://quarkus.io/guides/kafka) | Comunicação assíncrona entre serviços |
+| [Jackson](https://quarkus.io/guides/rest#json-serialisation) | Serialização de JSON |
+| [H2 Database](https://quarkus.io/guides/datasource) | Banco de dados em memória para testes |
 
-### Hibernate ORM
+---
 
-Create your first JPA entity
+## 🧪 Testes
 
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
+Para executar os testes automatizados:
 
-[Related Hibernate with Panache section...](https://quarkus.io/guides/hibernate-orm-panache)
+```bash
+./mvnw test
+```
 
+---
 
-### REST Client
+## 🧰 Estrutura dos Serviços
 
-Invoke different services through REST with JSON
+- `cliente-service`: Gerenciamento de clientes
+- `pedido-service`: Gerenciamento de pedidos
+- `airflow-orchestrator`: Orquestra coleta de dados de API externa e envia para Kafka
 
-[Related guide section...](https://quarkus.io/guides/rest-client)
+---
 
-### REST
+## 📊 Monitoramento e Observabilidade
 
-Easily start your REST Web Services
+Recomendado:
 
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+- **Prometheus + Grafana**: para métricas (latência, throughput, erros)
+- **Loki**: logs agregados por serviço
+- **Jaeger**: rastreamento distribuído com trace ID via headers
+- **Micrometer** (integrado ao Quarkus) para exposição de métricas
+
+---
+
+## ☁️ Alta Disponibilidade e Resiliência
+
+- `Retry` com `@Retry` do MicroProfile Fault Tolerance
+- `CircuitBreaker` para falhas consecutivas
+- `Timeout` e `Fallback` configurados
+- Mensageria assíncrona com Kafka: garante resiliência e desacoplamento
+
+---
+
+## 🧠 Desafio Técnico Enfrentado
+
+Em um sistema legado com múltiplos endpoints REST integrando sistemas bancários, enfrentei problemas com **baixa resiliência** devido a timeouts em cascata. Refatorei os clientes HTTP para usar o padrão `Circuit Breaker` + `Retry` com fallback automático para cache local em Redis. Isso reduziu falhas em 80% e melhorou a experiência do usuário.
+
+---
+
+## 🔍 Análise e Refatoração de Código
+
+### Código original:
+```java
+public class ClienteService {
+ public void cadastrar(Cliente cliente) {
+   if (cliente.getNome().isEmpty()) {
+     throw new RuntimeException("Nome inválido");
+   }
+   System.out.println("Cliente cadastrado: " + cliente.getNome());
+ }
+}
+```
+
+### Código refatorado:
+```java
+public class ClienteService {
+
+  private final Notificador notificador;
+
+  public ClienteService(Notificador notificador) {
+    this.notificador = notificador;
+  }
+
+  public void cadastrar(Cliente cliente) {
+    validar(cliente);
+    notificador.notificarCadastro(cliente);
+  }
+
+  private void validar(Cliente cliente) {
+    if (cliente == null || cliente.getNome() == null || cliente.getNome().isBlank()) {
+      throw new IllegalArgumentException("Nome do cliente é obrigatório");
+    }
+  }
+}
+
+public interface Notificador {
+  void notificarCadastro(Cliente cliente);
+}
+
+public class ConsoleNotificador implements Notificador {
+  public void notificarCadastro(Cliente cliente) {
+    System.out.println("Cliente cadastrado: " + cliente.getNome());
+  }
+}
+```
+
+**Princípios aplicados**:
+- ✅ SRP: responsabilidade única
+- ✅ DIP: dependência de abstrações
+- ✅ LSP: permite substituição de Notificador
+- ✅ Tratamento robusto de exceções
+
+---
+
+## 📬 Contato
+
+Gabriel Meello  
+📧 meello.gabriel@gmail.com  
+🌐 [linkedin.com/in/meellogabriel](https://www.linkedin.com/in/meellogabriel/)  
+🐙 [github.com/gbmeello](https://github.com/gbmeello)
+
+---
+
+Feito com 💻, ☕ e muita dedicação 🚀
