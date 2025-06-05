@@ -1,6 +1,5 @@
 package com.desafiosantander.infrastructure.kafka;
 
-
 import io.smallrye.reactive.messaging.annotations.Blocking;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,7 +13,7 @@ public class PedidoConsumer {
     @Inject
     LogisticaService service;
 
-    @Incoming("pedidos")
+    @Incoming("pedidos-in")
     @Blocking
     public void consumir(PedidoCriadoEvent event) {
         System.out.println("Evento recebido no logistica: " + event);
