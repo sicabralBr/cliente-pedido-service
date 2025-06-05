@@ -43,6 +43,7 @@ services:
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://quarkus:quarkus@postgres:5432/pedidos
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/dados:/opt/airflow/dados
       - ./airflow/entrypoint.sh:/entrypoint.sh
       - ./airflow/requirements.txt:/opt/airflow/requirements.txt
     ports:
@@ -65,6 +66,8 @@ services:
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://quarkus:quarkus@postgres:5432/pedidos
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/dados:/opt/airflow/dados
+      - ./airflow/entrypoint.sh:/entrypoint.sh
       - ./airflow/requirements.txt:/opt/airflow/requirements.txt
     entrypoint: ["/bin/bash", "-c", "pip install -r /opt/airflow/requirements.txt && airflow scheduler"]
 
