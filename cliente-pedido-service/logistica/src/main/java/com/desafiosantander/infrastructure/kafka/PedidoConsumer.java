@@ -17,6 +17,7 @@ public class PedidoConsumer {
     @Incoming("pedidos")
     @Blocking
     public void consumir(PedidoCriadoEvent event) {
+        System.out.println("Evento recebido no logistica: " + event);
         service.processar(event);
     }
 }
