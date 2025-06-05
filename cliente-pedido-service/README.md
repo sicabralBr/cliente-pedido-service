@@ -10,130 +10,85 @@ Este projeto implementa microsserviços em Java com **Quarkus**, para gerenciar 
 
 ---
 
-## 📦 Funcionalidades
+## 🐳 Executando com Docker Compose
 
-- Cadastro e gerenciamento de **Clientes** e **Pedidos**
-- Integração assíncrona via **Apache Kafka**
-- Consumo de API externa com **RestClient**
-- Orquestração com **Apache Airflow**
-- Armazenamento em **H2 Database**
-- Serialização com **Jackson**
-- Deploy nativo com **GraalVM**
-
----
-
-## 🚀 Executando em modo Dev
-
-Com hot reload:
+O ambiente completo é executado com:
 
 ```bash
-./mvnw quarkus:dev
+docker-compose up --build
 ```
 
-Acesse o Dev UI: [http://localhost:8080/q/dev/](http://localhost:8080/q/dev/)
+Serviços incluídos:
+
+- `cliente-service`: API para gerenciamento de clientes
+- `pedido-service`: API para gerenciamento de pedidos
+- `kafka`: broker para comunicação assíncrona
+- `zookeeper`: dependência do Kafka
+- `airflow-web`, `airflow-scheduler`: orquestração de tarefas
+- `postgres`: banco de dados relacional
+- `quarkus-apps`: containers Quarkus prontos para produção
 
 ---
 
-## 📦 Empacotando e executando
+## 🌐 Endpoints Importantes
 
-### JAR tradicional:
+- Cliente API: `http://localhost:8081/clientes`
+- Pedido API: `http://localhost:8082/pedidos`
+- Kafka UI (se configurado): `http://localhost:8088`
+- Airflow UI: `http://localhost:8080`
 
-```bash
-./mvnw package
-java -jar target/quarkus-app/quarkus-run.jar
-```
-
-### Über-JAR:
-
-```bash
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-java -jar target/*-runner.jar
-```
+Usuário padrão:
+- **login**: `airflow`
+- **senha**: `airflow`
 
 ---
 
-## 🧊 Executável Nativo
+## 🔗 Tecnologias e Extensões
 
-### Requisitos: GraalVM ou container
-
-```bash
-./mvnw package -Dnative
-```
-
-ou via container:
-
-```bash
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-Executar:
-
-```bash
-./target/cliente-pedido-service-1.0.0-SNAPSHOT-runner
-```
+| Tecnologia | Função |
+|------------|--------|
+| **Quarkus** | Framework Java para microserviços |
+| **Kafka** | Comunicação assíncrona |
+| **Airflow** | Orquestração de tarefas |
+| **PostgreSQL** | Persistência |
+| **Hibernate + Panache** | ORM simplificado |
+| **Jackson** | Serialização JSON |
+| **Docker** | Empacotamento e execução |
+| **Rest Client** | Consumo de APIs externas |
 
 ---
 
-## 🔗 Integrações e Extensões Usadas
+## 📊 Observabilidade Sugerida
 
-| Recurso | Descrição |
-|--------|----------|
-| [REST Client](https://quarkus.io/guides/rest-client) | Consumo de APIs externas |
-| [REST](https://quarkus.io/guides/rest) | Exposição de endpoints HTTP |
-| [Hibernate ORM + Panache](https://quarkus.io/guides/hibernate-orm-panache) | Persistência com modelo simplificado |
-| [Kafka](https://quarkus.io/guides/kafka) | Comunicação assíncrona entre serviços |
-| [Jackson](https://quarkus.io/guides/rest#json-serialisation) | Serialização de JSON |
-| [H2 Database](https://quarkus.io/guides/datasource) | Banco de dados em memória para testes |
+- **Prometheus + Grafana** para métricas
+- **Loki** para logs agregados
+- **Jaeger** para rastreamento distribuído entre microsserviços
 
 ---
 
-## 🧪 Testes
+## ⚙️ Resiliência & Alta Disponibilidade
 
-Para executar os testes automatizados:
-
-```bash
-./mvnw test
-```
-
----
-
-## 🧰 Estrutura dos Serviços
-
-- `cliente-service`: Gerenciamento de clientes
-- `pedido-service`: Gerenciamento de pedidos
-- `airflow-orchestrator`: Orquestra coleta de dados de API externa e envia para Kafka
-
----
-
-## 📊 Monitoramento e Observabilidade
-
-Recomendado:
-
-- **Prometheus + Grafana**: para métricas (latência, throughput, erros)
-- **Loki**: logs agregados por serviço
-- **Jaeger**: rastreamento distribuído com trace ID via headers
-- **Micrometer** (integrado ao Quarkus) para exposição de métricas
-
----
-
-## ☁️ Alta Disponibilidade e Resiliência
-
-- `Retry` com `@Retry` do MicroProfile Fault Tolerance
-- `CircuitBreaker` para falhas consecutivas
-- `Timeout` e `Fallback` configurados
-- Mensageria assíncrona com Kafka: garante resiliência e desacoplamento
+- Timeouts e retries nas chamadas REST
+- Circuit breakers (ex: Resilience4j/MicroProfile Fault Tolerance)
+- Kafka para desacoplamento entre serviços
+- Banco de dados com persistência em volumes Docker
 
 ---
 
 ## 🧠 Desafio Técnico Enfrentado
 
-Em um sistema legado com múltiplos endpoints REST integrando sistemas bancários, enfrentei problemas com **baixa resiliência** devido a timeouts em cascata. Refatorei os clientes HTTP para usar o padrão `Circuit Breaker` + `Retry` com fallback automático para cache local em Redis. Isso reduziu falhas em 80% e melhorou a experiência do usuário.
+Ao lidar com múltiplas chamadas de APIs instáveis em produção, implementei:
+- Circuit breakers com fallback para cache Redis
+- Retry com backoff exponencial
+- Timeout e monitoramento de latência
+
+🔁 Resultado: Redução de falhas em 80% e maior confiança no sistema.
 
 ---
 
-## 🔍 Análise e Refatoração de Código
+## 🧹 Refatoração de Código (SOLID)
 
-### Código original:
+### Original
 ```java
 public class ClienteService {
  public void cadastrar(Cliente cliente) {
@@ -145,10 +100,9 @@ public class ClienteService {
 }
 ```
 
-### Código refatorado:
+### Refatorado
 ```java
 public class ClienteService {
-
   private final Notificador notificador;
 
   public ClienteService(Notificador notificador) {
@@ -178,12 +132,6 @@ public class ConsoleNotificador implements Notificador {
 }
 ```
 
-**Princípios aplicados**:
-- ✅ SRP: responsabilidade única
-- ✅ DIP: dependência de abstrações
-- ✅ LSP: permite substituição de Notificador
-- ✅ Tratamento robusto de exceções
-
 ---
 
 ## 📬 Contato
@@ -195,4 +143,4 @@ Gabriel Meello
 
 ---
 
-Feito com 💻, ☕ e muita dedicação 🚀
+Feito com 💻, ☕ e containers 🚀
