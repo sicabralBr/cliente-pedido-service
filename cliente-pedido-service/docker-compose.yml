@@ -36,17 +36,37 @@ services:
 
   airflow:
     image: apache/airflow:2.7.1-python3.11
+    container_name: airflow-web
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__FERNET_KEY: ''
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: sqlite:////root/airflow/airflow.db
+      AIRFLOW__CORE__FERNET_KEY: 'defaultfernetkey1234567890=='
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://quarkus:quarkus@postgres:5432/pedidos
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/entrypoint.sh:/entrypoint.sh
+      - ./airflow/requirements.txt:/opt/airflow/requirements.txt
     ports:
       - "8089:8080"
-    command: webserver
+    entrypoint: [ "/bin/bash", "-c", "pip install -r /opt/airflow/requirements.txt && bash /entrypoint.sh" ]
+
     depends_on:
       - kafka
+      - postgres
+
+  airflow-scheduler:
+    image: apache/airflow:2.7.1-python3.11
+    container_name: airflow-scheduler
+    depends_on:
+      - postgres
+    restart: always
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__FERNET_KEY: 'defaultfernetkey1234567890=='
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://quarkus:quarkus@postgres:5432/pedidos
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/requirements.txt:/opt/airflow/requirements.txt
+    entrypoint: ["/bin/bash", "-c", "pip install -r /opt/airflow/requirements.txt && airflow scheduler"]
 
   cliente-pedido-service:
     build:
