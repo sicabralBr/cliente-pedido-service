@@ -8,11 +8,17 @@ import java.math.BigDecimal;
 @Entity
 public class ItemPedido extends PanacheEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
+    @Column(nullable = false)
     private String produto;
+
+    @Column(nullable = false)
     private Integer quantidade;
+
+    @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal precoUnitario;
 
     public ItemPedido() {

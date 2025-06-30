@@ -1,14 +1,19 @@
 package com.desafiosantander.domain.repository;
 
 import com.desafiosantander.domain.model.Cliente;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface ClienteRepository {
-    void persist(Cliente cliente);
-    void update(Cliente cliente);
-    Optional<Cliente> findById(Long id);
-    List<Cliente> findAll();
-    void delete(Cliente cliente);
+@ApplicationScoped
+public class ClienteRepository implements PanacheRepository<Cliente> {
+
+    public Optional<Cliente> findByEmail(String email) {
+        return find("email", email).firstResultOptional();
+    }
+
+    public Optional<Cliente> findByIdOptional(Long id) {
+        return findByIdOptional(id);
+    }
 }

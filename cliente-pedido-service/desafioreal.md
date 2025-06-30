@@ -1,6 +1,7 @@
 ✅ Desafio Técnico Real
 Situação:
-Durante o desenvolvimento de uma plataforma de onboarding digital com reconhecimento facial, enfrentamos problemas de latência e timeout nas chamadas a APIs de terceiros (provedores de biometria), principalmente em horários de pico.
+Durante o desenvolvimento de uma plataforma de onboarding digital com reconhecimento facial, enfrentamos problemas de
+latência e timeout nas chamadas a APIs de terceiros (provedores de biometria), principalmente em horários de pico.
 
 Cenário:
 
@@ -31,15 +32,17 @@ Armazenamento do status em cache (Redis)
 
 Trade-offs:
 
-Decisão	Prós	Contras
-Tornar o fluxo assíncrono	Escalável e resiliente	Complexidade na rastreabilidade
-Retry + timeout	Tolerante a falhas temporárias	Risco de acúmulo de tarefas pendentes
-Uso de cache e status	Resposta rápida ao usuário	Risco de stale data se não bem controlado
+Decisão Prós Contras
+Tornar o fluxo assíncrono Escalável e resiliente Complexidade na rastreabilidade
+Retry + timeout Tolerante a falhas temporárias Risco de acúmulo de tarefas pendentes
+Uso de cache e status Resposta rápida ao usuário Risco de stale data se não bem controlado
 
 Aprendizados:
 
 Evite confiar em serviços de terceiros sem fallback ou estratégia de resiliência.
 
-Fluxos assíncronos são mais escaláveis, mas exigem bons mecanismos de rastreamento e observabilidade (usamos Jaeger e Prometheus).
+Fluxos assíncronos são mais escaláveis, mas exigem bons mecanismos de rastreamento e observabilidade (usamos Jaeger e
+Prometheus).
 
-A arquitetura orientada a eventos é poderosa, desde que você modele corretamente os estados de transição e garanta idempotência.
+A arquitetura orientada a eventos é poderosa, desde que você modele corretamente os estados de transição e garanta
+idempotência.

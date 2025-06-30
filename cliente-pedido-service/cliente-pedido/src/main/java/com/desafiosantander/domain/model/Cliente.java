@@ -8,13 +8,13 @@ import jakarta.persistence.Entity;
 public class Cliente extends PanacheEntity {
 
     @Column(nullable = false)
-    public String nome;
+    private String nome;
 
     @Column(nullable = false, unique = true)
-    public String email;
+    private String email;
 
-
-    public Cliente() {}
+    public Cliente() {
+    }
 
     public Cliente(String nome, String email) {
         this.nome = nome;

@@ -1,29 +1,16 @@
-package com.desafiosantander.infrastructure.repository;
+package com.desafiosantander.domain.repository;
 
 import com.desafiosantander.domain.model.Pedido;
-import com.desafiosantander.domain.repository.PedidoRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
-public class PedidoRepositoryImpl implements PedidoRepository {
+public class PedidoRepository implements PanacheRepository<Pedido> {
 
-    @Override
-    @Transactional
-    public void persist(Pedido pedido) {
-        pedido.persist();
+    public Optional<Pedido> buscarPorId(Long id) {
+        return findByIdOptional(id);
     }
 
-    @Override
-    public Optional<Pedido> findById(Long id) {
-        return Pedido.findByIdOptional(id);
-    }
-
-    @Override
-    public List<Pedido> findAll() {
-        return Pedido.listAll();
-    }
 }

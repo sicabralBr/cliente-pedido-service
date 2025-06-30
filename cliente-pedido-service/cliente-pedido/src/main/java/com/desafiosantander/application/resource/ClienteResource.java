@@ -3,7 +3,9 @@ package com.desafiosantander.application.resource;
 import com.desafiosantander.application.dto.ClienteRequest;
 import com.desafiosantander.application.dto.ClienteResponse;
 import com.desafiosantander.application.service.ClienteService;
+
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -13,11 +15,15 @@ import jakarta.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ClienteResource {
 
+    private final ClienteService clienteService;
+
     @Inject
-    ClienteService clienteService;
+    public ClienteResource(ClienteService clienteService) {
+        this.clienteService = clienteService;
+    }
 
     @POST
-    public Response criar(ClienteRequest dto) {
+    public Response criar(@Valid ClienteRequest dto) {
         ClienteResponse created = clienteService.cadastrar(dto);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
@@ -38,7 +44,7 @@ public class ClienteResource {
 
     @PUT
     @Path("/{id}")
-    public Response atualizar(@PathParam("id") Long id, ClienteRequest dto) {
+    public Response atualizar(@PathParam("id") Long id, @Valid ClienteRequest dto) {
         clienteService.editar(id, dto);
         return Response.noContent().build();
     }

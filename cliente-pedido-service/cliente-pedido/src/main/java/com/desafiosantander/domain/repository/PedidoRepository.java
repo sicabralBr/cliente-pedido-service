@@ -1,12 +1,20 @@
 package com.desafiosantander.domain.repository;
 
 import com.desafiosantander.domain.model.Pedido;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
 
-public interface PedidoRepository {
-    void persist(Pedido pedido);
-    Optional<Pedido> findById(Long id);
-    List<Pedido> findAll();
+@ApplicationScoped
+public class PedidoRepository implements PanacheRepository<Pedido> {
+
+    public Optional<Pedido> findByIdOptional(Long id) {
+        return findByIdOptional(id);
+    }
+
+    public List<Pedido> findAllPedidos() {
+        return listAll();
+    }
 }

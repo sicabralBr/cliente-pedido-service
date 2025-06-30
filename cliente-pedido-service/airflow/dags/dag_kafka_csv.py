@@ -1,9 +1,9 @@
+import csv
+import json
+import requests
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
-import requests
-import csv
-import json
 from kafka import KafkaProducer
 
 URL = "https://jsonplaceholder.typicode.com/posts"
@@ -17,12 +17,14 @@ default_args = {
     'start_date': datetime(2024, 1, 1),
 }
 
+
 def baixar_dados():
     response = requests.get(URL)
     response.raise_for_status()
     with open(JSON_FILE_PATH, 'w') as f:
         json.dump(response.json(), f)
     print(f"✅ JSON salvo em {JSON_FILE_PATH}")
+
 
 def converter_para_csv():
     with open(JSON_FILE_PATH) as json_file:
@@ -34,6 +36,7 @@ def converter_para_csv():
         for item in dados:
             writer.writerow(item)
     print(f"✅ CSV salvo em {CSV_FILE_PATH}")
+
 
 def publicar_em_kafka():
     producer = KafkaProducer(
@@ -59,11 +62,11 @@ def publicar_em_kafka():
     producer.flush()
     print(f"✅ Todos os dados foram enviados para o tópico Kafka: {KAFKA_TOPIC}")
 
+
 with DAG("dag_airflow_to_kafka",
          default_args=default_args,
          schedule_interval="@daily",
          catchup=False) as dag:
-
     t1 = PythonOperator(
         task_id="baixar_dados",
         python_callable=baixar_dados

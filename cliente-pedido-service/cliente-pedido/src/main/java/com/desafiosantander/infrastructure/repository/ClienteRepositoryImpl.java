@@ -1,41 +1,15 @@
-package com.desafiosantander.infrastructure.repository;
+package com.desafiosantander.domain.repository;
 
 import com.desafiosantander.domain.model.Cliente;
-import com.desafiosantander.domain.repository.ClienteRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
-public class ClienteRepositoryImpl implements ClienteRepository {
+public class ClienteRepository implements PanacheRepository<Cliente> {
 
-    @Override
-    @Transactional
-    public void persist(Cliente cliente) {
-        cliente.persist();
-    }
-
-    @Override
-    @Transactional
-    public void update(Cliente cliente) {
-        cliente.persistAndFlush();
-    }
-
-    @Override
-    public Optional<Cliente> findById(Long id) {
-        return Cliente.findByIdOptional(id);
-    }
-
-    @Override
-    public List<Cliente> findAll() {
-        return Cliente.listAll();
-    }
-
-    @Override
-    @Transactional
-    public void delete(Cliente cliente) {
-        cliente.delete();
+    public Optional<Cliente> findByEmail(String email) {
+        return find("email", email).firstResultOptional();
     }
 }

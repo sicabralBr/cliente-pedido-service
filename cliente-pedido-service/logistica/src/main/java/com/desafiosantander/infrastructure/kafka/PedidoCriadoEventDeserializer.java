@@ -1,8 +1,6 @@
-package com.desafiosantander.infrastructure.kafka;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import com.desafiosantander.application.dto.PedidoCriadoEvent;
-import io.quarkus.kafka.client.serialization.ObjectMapperDeserializer;
-
+@RegisterForReflection
 public class PedidoCriadoEventDeserializer extends ObjectMapperDeserializer<PedidoCriadoEvent> {
     public PedidoCriadoEventDeserializer() {
         super(PedidoCriadoEvent.class);

@@ -5,8 +5,12 @@ import com.desafiosantander.application.dto.ClienteResponse;
 import com.desafiosantander.application.mapper.ClienteMapper;
 import com.desafiosantander.domain.model.Cliente;
 import com.desafiosantander.domain.repository.ClienteRepository;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +22,7 @@ public class ClienteService {
     @Inject
     ClienteRepository clienteRepository;
 
+    @Transactional
     public ClienteResponse cadastrar(ClienteRequest dto) {
         Cliente cliente = ClienteMapper.toEntity(dto);
         clienteRepository.persist(cliente);
@@ -25,7 +30,8 @@ public class ClienteService {
     }
 
     public Optional<ClienteResponse> buscarPorId(Long id) {
-        return clienteRepository.findById(id)
+        Cliente cliente = clienteRepository.findById(id);
+        return Optional.ofNullable(cliente)
                 .map(ClienteMapper::toResponse);
     }
 
@@ -35,18 +41,23 @@ public class ClienteService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void editar(Long id, ClienteRequest dto) {
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
+        Cliente cliente = clienteRepository.findById(id);
+        if (cliente == null) {
+            throw new EntityNotFoundException("Cliente não encontrado");
+        }
 
-        cliente.setNome(dto.nome);
-        cliente.setEmail(dto.email);
-        clienteRepository.update(cliente);
+        cliente.setNome(dto.getNome());
+        cliente.setEmail(dto.getEmail());
     }
 
+    @Transactional
     public void excluir(Long id) {
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
+        Cliente cliente = clienteRepository.findById(id);
+        if (cliente == null) {
+            throw new EntityNotFoundException("Cliente não encontrado");
+        }
 
         clienteRepository.delete(cliente);
     }

@@ -4,13 +4,17 @@ import com.desafiosantander.application.dto.ClienteRequest;
 import com.desafiosantander.application.dto.ClienteResponse;
 import com.desafiosantander.domain.model.Cliente;
 
-public class ClienteMapper {
+public final class ClienteMapper {
+
+    private ClienteMapper() {}
 
     public static Cliente toEntity(ClienteRequest dto) {
-        return new Cliente(dto.nome, dto.email);
+        if (dto == null) return null;
+        return new Cliente(dto.getNome(), dto.getEmail());
     }
 
     public static ClienteResponse toResponse(Cliente entity) {
-        return new ClienteResponse(entity.id, entity.getNome(), entity.getEmail());
+        if (entity == null) return null;
+        return new ClienteResponse(entity.getId(), entity.getNome(), entity.getEmail());
     }
 }

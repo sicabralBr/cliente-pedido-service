@@ -11,10 +11,11 @@ Loki: coleta e visualização de logs centralizados.
 Jaeger: rastreamento distribuído entre microsserviços via OpenTelemetry.
 
 📊 Métricas capturadas
-Serviço	Métrica	Descrição
-cliente-pedido-service	http_server_requests_seconds_count, http_server_requests_seconds_sum	Latência e contagem de requisições por endpoint
-logistica-service	kafka_messages_consumed_total	Total de eventos Kafka processados
-Kafka	kafka.server.BrokerTopicMetrics	Taxa de produção/consumo por tópico
+Serviço Métrica Descrição
+cliente-pedido-service http_server_requests_seconds_count, http_server_requests_seconds_sum Latência e contagem de
+requisições por endpoint
+logistica-service kafka_messages_consumed_total Total de eventos Kafka processados
+Kafka kafka.server.BrokerTopicMetrics Taxa de produção/consumo por tópico
 
 📁 Logs
 Todos os serviços configuram logs com JSON ou logfmt, enviados via stdout e capturados pelo Loki.

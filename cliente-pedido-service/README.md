@@ -1,6 +1,7 @@
 # cliente-pedido-service
 
-Este projeto implementa microsserviços em Java com **Quarkus**, para gerenciar clientes e pedidos. Inclui integração com Kafka, persistência com Hibernate + Panache, consumo de APIs externas e orquestração com Airflow.
+Este projeto implementa microsserviços em Java com **Quarkus**, para gerenciar clientes e pedidos. Inclui integração com
+Kafka, persistência com Hibernate + Panache, consumo de APIs externas e orquestração com Airflow.
 
 ## Autor
 
@@ -38,6 +39,7 @@ Serviços incluídos:
 - Airflow UI: `http://localhost:8080`
 
 Usuário padrão:
+
 - **login**: `airflow`
 - **senha**: `airflow`
 
@@ -45,16 +47,16 @@ Usuário padrão:
 
 ## 🔗 Tecnologias e Extensões
 
-| Tecnologia | Função |
-|------------|--------|
-| **Quarkus** | Framework Java para microserviços |
-| **Kafka** | Comunicação assíncrona |
-| **Airflow** | Orquestração de tarefas |
-| **PostgreSQL** | Persistência |
-| **Hibernate + Panache** | ORM simplificado |
-| **Jackson** | Serialização JSON |
-| **Docker** | Empacotamento e execução |
-| **Rest Client** | Consumo de APIs externas |
+| Tecnologia              | Função                            |
+|-------------------------|-----------------------------------|
+| **Quarkus**             | Framework Java para microserviços |
+| **Kafka**               | Comunicação assíncrona            |
+| **Airflow**             | Orquestração de tarefas           |
+| **PostgreSQL**          | Persistência                      |
+| **Hibernate + Panache** | ORM simplificado                  |
+| **Jackson**             | Serialização JSON                 |
+| **Docker**              | Empacotamento e execução          |
+| **Rest Client**         | Consumo de APIs externas          |
 
 ---
 
@@ -78,6 +80,7 @@ Usuário padrão:
 ## 🧠 Desafio Técnico Enfrentado
 
 Ao lidar com múltiplas chamadas de APIs instáveis em produção, implementei:
+
 - Circuit breakers com fallback para cache Redis
 - Retry com backoff exponencial
 - Timeout e monitoramento de latência
@@ -89,46 +92,48 @@ Ao lidar com múltiplas chamadas de APIs instáveis em produção, implementei:
 ## 🧹 Refatoração de Código (SOLID)
 
 ### Original
+
 ```java
 public class ClienteService {
- public void cadastrar(Cliente cliente) {
-   if (cliente.getNome().isEmpty()) {
-     throw new RuntimeException("Nome inválido");
-   }
-   System.out.println("Cliente cadastrado: " + cliente.getNome());
- }
+    public void cadastrar(Cliente cliente) {
+        if (cliente.getNome().isEmpty()) {
+            throw new RuntimeException("Nome inválido");
+        }
+        System.out.println("Cliente cadastrado: " + cliente.getNome());
+    }
 }
 ```
 
 ### Refatorado
+
 ```java
 public class ClienteService {
-  private final Notificador notificador;
+    private final Notificador notificador;
 
-  public ClienteService(Notificador notificador) {
-    this.notificador = notificador;
-  }
-
-  public void cadastrar(Cliente cliente) {
-    validar(cliente);
-    notificador.notificarCadastro(cliente);
-  }
-
-  private void validar(Cliente cliente) {
-    if (cliente == null || cliente.getNome() == null || cliente.getNome().isBlank()) {
-      throw new IllegalArgumentException("Nome do cliente é obrigatório");
+    public ClienteService(Notificador notificador) {
+        this.notificador = notificador;
     }
-  }
+
+    public void cadastrar(Cliente cliente) {
+        validar(cliente);
+        notificador.notificarCadastro(cliente);
+    }
+
+    private void validar(Cliente cliente) {
+        if (cliente == null || cliente.getNome() == null || cliente.getNome().isBlank()) {
+            throw new IllegalArgumentException("Nome do cliente é obrigatório");
+        }
+    }
 }
 
 public interface Notificador {
-  void notificarCadastro(Cliente cliente);
+    void notificarCadastro(Cliente cliente);
 }
 
 public class ConsoleNotificador implements Notificador {
-  public void notificarCadastro(Cliente cliente) {
-    System.out.println("Cliente cadastrado: " + cliente.getNome());
-  }
+    public void notificarCadastro(Cliente cliente) {
+        System.out.println("Cliente cadastrado: " + cliente.getNome());
+    }
 }
 ```
 

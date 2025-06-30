@@ -69,7 +69,7 @@ services:
       - ./airflow/dados:/opt/airflow/dados
       - ./airflow/entrypoint.sh:/entrypoint.sh
       - ./airflow/requirements.txt:/opt/airflow/requirements.txt
-    entrypoint: ["/bin/bash", "-c", "pip install -r /opt/airflow/requirements.txt && airflow scheduler"]
+    entrypoint: [ "/bin/bash", "-c", "pip install -r /opt/airflow/requirements.txt && airflow scheduler" ]
 
   cliente-pedido-service:
     build:

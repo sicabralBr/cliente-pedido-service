@@ -1,30 +1,17 @@
-package com.desafiosantander.application.resource;
-
-import com.desafiosantander.application.dto.PedidoRequest;
-import com.desafiosantander.application.service.PedidoService;
-import com.desafiosantander.domain.StatusPedido;
-import com.desafiosantander.domain.model.Pedido;
-import com.desafiosantander.domain.repository.PedidoRepository;
-import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-
-import java.util.Optional;
-
 @Path("/pedidos")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class PedidoResource {
 
-    @Inject
-    PedidoService pedidoService;
+    private final PedidoService pedidoService;
 
     @Inject
-    PedidoRepository pedidoRepository;
+    public PedidoResource(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
+    }
 
     @POST
-    public Response criar(PedidoRequest request) {
+    public Response criar(@Valid PedidoRequest request) {
         var created = pedidoService.criar(request);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
@@ -52,25 +39,17 @@ public class PedidoResource {
 
     @PUT
     @Path("/{id}/status")
-    @Transactional
     @Consumes(MediaType.TEXT_PLAIN)
     public Response atualizarStatus(@PathParam("id") Long id, String novoStatus) {
-        Optional<Pedido> optionalPedido = pedidoRepository.findById(id);
-        if (optionalPedido.isEmpty()) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        Pedido pedido = optionalPedido.get();
-
         try {
-            pedido.setStatus(StatusPedido.valueOf(novoStatus));
+            pedidoService.atualizarStatus(id, novoStatus);
+            return Response.noContent().build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Status inválido: " + novoStatus)
                     .build();
+        } catch (EntityNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-
-        return Response.noContent().build();
     }
 }
-
